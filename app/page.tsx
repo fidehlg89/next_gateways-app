@@ -1,35 +1,19 @@
-"use client";
-import axios from "axios";
-import { Gateway, Device } from "../src/interfaces";
-import { useEffect, useState } from "react";
-import GatewaysList from "@/src/components/containers/GatewaysList";
 import Layout from "@/src/components/Layout";
-
-const API_URL = process.env.API_URL || "http://localhost:3000/api";
+import Link from "next/link";
 
 const Home = () => {
-  const [gateways, setGateways] = useState<Gateway[]>([]);
-
-  useEffect(() => {
-    fetchGateways();
-  }, []);
-
-  const fetchGateways = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/gateways`);
-      setGateways(response.data);
-    } catch (error) {
-      console.error(
-        "Error fetching gateways please check your api request",
-        error
-      );
-    }
-  };
-
   return (
-    <Layout>
-      <GatewaysList gateways={gateways} />
-    </Layout>
+      <div className="bg-gray-50">
+        <h2 className="text-center text-gray-500">{`Welcome to our app, ready to add your gateway information. Let's started!`}</h2>
+        <div className="flex items-center justify-center px-4 py-12 mx-auto mt-5 max-w-7xl sm:px-6 lg:py-16 lg:px-8">
+          <Link
+            href="/gateways"
+            className="block w-1/3 px-5 py-3 text-base font-medium text-center text-white bg-indigo-600 border border-transparent rounded-md lg:inline-block lg:w-auto hover:bg-indigo-700"
+          >
+            <span>Manage Gateways</span>
+          </Link>
+        </div>
+      </div>
   );
 };
 

@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-import { Gateway, Device } from "../../src/interfaces";
+import { Gateway } from "../../src/interfaces";
 import { useEffect, useState } from "react";
 import GatewaysList from "@/src/components/containers/GatewaysList";
 import Layout from "@/src/components/Layout";
@@ -29,6 +29,7 @@ const Home = () => {
   return (
     <Layout>
       <GatewaysList gateways={gateways} />
+
     </Layout>
   );
 };
