@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { ILayoutProps } from "@/src/types";
 
-const Layout = ({ children }:ILayoutProps) => {
+const Layout = ({ children }: ILayoutProps) => {
   return (
     <div>
       {/* Header */}
