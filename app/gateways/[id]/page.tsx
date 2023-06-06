@@ -1,7 +1,7 @@
 "use client";
 
 import GatewayDetails from "@/src/components/containers/GatewayDetails";
-import Layout from "@/src/components/layout";
+import Layout from "@/src/components/layouts";
 import { useParams } from "next/navigation";
 import Loading from "../loading";
 import { Suspense } from "react";

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import Layout from "@/src/components/layout";
+import Layout from "@/src/components/layouts";
 import DevicesList from "@/src/components/containers/DevicesList";
 import { Device } from "@/src/interfaces";
 

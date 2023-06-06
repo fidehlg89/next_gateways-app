@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import GatewaysList from "@/src/components/containers/GatewaysList";
-import Layout from "@/src/components/layout";
+import Layout from "@/src/components/layouts";
 import { Gateway } from "@/src/interfaces";
 import GatewayContext from "@/src/context/GatewayContext";
 import { toast } from "react-toastify";
