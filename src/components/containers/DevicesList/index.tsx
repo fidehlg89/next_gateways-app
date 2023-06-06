@@ -40,11 +40,11 @@ const DevicesList = ({
             />
           </label>
           <label className="block mb-2">
-            Date Created:
+            Created Date:
             <input
               className="w-full px-3 py-2 border border-gray-300 rounded"
               type="text"
-              value={device.dateCreated.toISOString().slice(0, 10)}
+              value={device.dateCreated?.toISOString().slice(0, 10)}
               disabled
             />
           </label>
@@ -63,7 +63,7 @@ const DevicesList = ({
             className="px-2 py-1 text-sm text-red-700 bg-transparent border border-red-700 rounded"
             onClick={() => onRemoveDevice(index)}
           >
-            Remove Device
+            Cancel
           </button>
         </div>
       ))}

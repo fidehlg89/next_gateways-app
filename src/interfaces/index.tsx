@@ -9,6 +9,6 @@ export interface Gateway {
 export interface Device {
   uid: number;
   vendor: string;
-  dateCreated: Date;
+  dateCreated?: Date | null;
   status: string;
 }

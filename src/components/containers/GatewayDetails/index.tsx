@@ -5,6 +5,7 @@ import axios from "axios";
 import { Gateway, Device } from "@/src/interfaces";
 import { ToastContainer, toast } from "react-toastify";
 import DevicesInfo from "../DevicesInfo";
+import AddDevice from "./AddDevice";
 
 export type GatewayDetailsProps = {
   id: string;
@@ -12,7 +13,45 @@ export type GatewayDetailsProps = {
 
 const GatewayDetails = ({ id }: GatewayDetailsProps) => {
   const [gateway, setGateway] = useState<Gateway | null>(null);
-  const [editedDevices, setEditedDevices] = useState<Device[]>([]);
+
+  const [showAddDevice, setShowAddDevice] = useState(false);
+
+  const handleAddDevice = () => {
+    setShowAddDevice(true);
+  };
+
+  const handleSaveNewDevice = async (newDevice: Device) => {
+    try {
+      if (gateway) {
+        const updatedDevices = [...gateway.devices, newDevice];
+
+        const { data } = await axios.put(
+          `${process.env.API_URL}/gateways/${id}`,
+          { devices: updatedDevices }
+        );
+
+        if (data.status === 200) {
+          toast.error(`Device successfully added`);
+        }
+
+        setGateway(data);
+
+        setShowAddDevice(false);
+      }
+    } catch (error) {
+      toast.error(`Error adding new device`);
+      console.log(error);
+    }
+  };
+
+  const handleCancelAddDevice = () => {
+    setNewDevice({
+      uid: 0,
+      vendor: "",
+      status: ""
+    });
+    setShowAddDevice(false);
+  };
 
   useEffect(() => {
     const fetchGatewayDetails = async () => {
@@ -21,7 +60,6 @@ const GatewayDetails = ({ id }: GatewayDetailsProps) => {
           `${process.env.API_URL}/gateways/${id}`
         );
         setGateway(data);
-        setEditedDevices(data.devices);
       } catch (error) {
         console.error("Error fetching gateway details:", error);
       }
@@ -53,23 +91,41 @@ const GatewayDetails = ({ id }: GatewayDetailsProps) => {
     }
   };
 
-  const handleEditDevice = (index: number) => {
-    // Lógica para manejar la edición del dispositivo
-    console.log("Editar dispositivo en el índice:", index);
-  };
+  const handleEditDevice = async (index: number, device: Device) => {
+    try {
+      if (gateway) {
+        const updatedDevices = [...gateway.devices];
 
+        if (index >= 0 && index < updatedDevices.length) {
+          updatedDevices[index] = device;
+        }
+        const { data } = await axios.put(
+          `${process.env.API_URL}/gateways/${id}`,
+          { devices: updatedDevices }
+        );
+
+        if (data.status === 200) {
+          toast.error(`Device successfully updated`);
+        }
+
+        setGateway(data);
+      }
+    } catch (error) {
+      toast.error(`Error updating Device: ${error}`);
+    }
+  };
 
   return (
     <>
       {gateway && (
-        <div className="max-w-md mx-auto">
+        <div className="max-w-xl mx-auto">
           <ToastContainer />
           <div className="px-4 sm:px-0">
             <h3 className="text-base font-semibold leading-7 text-gray-900">
               Gateway Information
             </h3>
             <p className="max-w-2xl mt-1 text-sm leading-6 text-gray-500">
-              Gateway details .
+              Gateway details
             </p>
           </div>
           <div className="mt-6 border-t border-gray-100">
@@ -105,6 +161,21 @@ const GatewayDetails = ({ id }: GatewayDetailsProps) => {
             onDelete={handleDeleteDevice}
             onEdit={handleEditDevice}
           />
+          {showAddDevice ? (
+            <AddDevice
+              onSave={handleSaveNewDevice}
+              onCancel={handleCancelAddDevice}
+            />
+          ) : (
+            <div className="mt-4">
+              <button
+                onClick={handleAddDevice}
+                className="px-4 py-2 text-white bg-blue-500 rounded"
+              >
+                Add Device
+              </button>
+            </div>
+          )}
         </div>
       )}
     </>

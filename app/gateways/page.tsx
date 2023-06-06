@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import GatewaysList from "@/src/components/containers/GatewaysList";
+import GatewaysContainer from "@/src/components/containers/GatewaysContainer";
 import Layout from "@/src/components/layouts";
 import { Gateway } from "@/src/interfaces";
 import GatewayContext from "@/src/context/GatewayContext";
@@ -40,7 +40,7 @@ const Home = () => {
   return (
     <Layout>
       <GatewayContext.Provider value={{ gateways, deleteGateway }}>
-        <GatewaysList />
+        <GatewaysContainer />
       </GatewayContext.Provider>
     </Layout>
   );
