@@ -4,7 +4,8 @@ export const Pagination = ({
   currentPage,
   totalItems,
   itemsPerPage,
-  onPageChange
+  onPageChange,
+  onItemsPerPageChange
 }: IPaginationProps) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
@@ -15,71 +16,88 @@ export const Pagination = ({
   };
 
   return (
-    <nav className="flex items-center">
-      {/* Previous page button */}
-      <button
-        className={`${
-          currentPage === 1 ? "opacity-50 cursor-default" : "cursor-pointer"
-        } px-2 py-1 text-sm text-gray-700`}
-        onClick={() => handlePageChange(currentPage - 1)}
-        disabled={currentPage === 1}
+    <>
+      <label
+        htmlFor="itemsPerPage"
+        className="mr-2 text-sm font-medium text-gray-700"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-4 h-4"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15.75 19.5L8.25 12l7.5-7.5"
-          />
-        </svg>
-      </button>
-
-      {/* Page buttons */}
-      {Array.from({ length: totalPages }).map((_, index) => (
+        Items per page:
+      </label>
+      <input
+        id="itemsPerPage"
+        type="number"
+        min="1"
+        step="1"
+        value={itemsPerPage}
+        onChange={onItemsPerPageChange}
+        className="w-16 px-2 py-1 text-sm border focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+      />
+      <nav className="flex items-center">
+        {/* Previous page button */}
         <button
-          key={index + 1}
           className={`${
-            currentPage === index + 1
-              ? "bg-blue-500 text-white"
-              : "bg-gray-200 text-gray-700"
-          } px-2 py-1 text-sm rounded-full mr-1`}
-          onClick={() => handlePageChange(index + 1)}
+            currentPage === 1 ? "opacity-50 cursor-default" : "cursor-pointer"
+          } px-2 py-1 text-sm text-gray-700`}
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
         >
-          {index + 1}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-4 h-4"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15.75 19.5L8.25 12l7.5-7.5"
+            />
+          </svg>
         </button>
-      ))}
 
-      {/* Next page button */}
-      <button
-        className={`${
-          currentPage === totalPages
-            ? "opacity-50 cursor-default"
-            : "cursor-pointer"
-        } px-2 py-1 text-sm text-gray-700`}
-        onClick={() => handlePageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-4 h-4"
+        {/* Page buttons */}
+        {Array.from({ length: totalPages }).map((_, index) => (
+          <button
+            key={index + 1}
+            className={`${
+              currentPage === index + 1
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 text-gray-700"
+            } px-2 py-1 text-sm rounded-full mr-1`}
+            onClick={() => handlePageChange(index + 1)}
+          >
+            {index + 1}
+          </button>
+        ))}
+
+        {/* Next page button */}
+        <button
+          className={`${
+            currentPage === totalPages
+              ? "opacity-50 cursor-default"
+              : "cursor-pointer"
+          } px-2 py-1 text-sm text-gray-700`}
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M8.25 4.5l7.5 7.5-7.5 7.5"
-          />
-        </svg>
-      </button>
-    </nav>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-4 h-4"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M8.25 4.5l7.5 7.5-7.5 7.5"
+            />
+          </svg>
+        </button>
+      </nav>
+    </>
   );
 };

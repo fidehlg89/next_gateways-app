@@ -1,11 +1,40 @@
 import React, { useState } from "react";
 import useContext from "../../../hooks/useContext";
-import GatewayItem from "../../GatewayItem";
+import GatewayItem from "../GatewayItem";
 import Link from "next/link";
 import { Pagination } from "../../utils/Pagination";
+import GatewayTable from "../GatewayTable";
+
+const header = [
+  {
+    name: "Serial Number",
+    className: "text-left",
+    text: "Serial Number"
+  },
+  {
+    name: "Name",
+    className: "text-left",
+    text: "Name"
+  },
+  {
+    name: "IP Address",
+    className: "text-left",
+    text: "IP Address"
+  },
+  {
+    name: "Devices",
+    className: "text-center",
+    text: "Devices"
+  },
+  {
+    name: "Actions",
+    className: "text-center",
+    text: "Actions"
+  }
+];
 
 const GatewaysList = () => {
-  const { gateways, deleteGateway } = useContext();
+  const { gateways } = useContext();
 
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -13,12 +42,18 @@ const GatewaysList = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentGateways = gateways.slice(indexOfFirstItem, indexOfLastItem);
 
-  const handleDeleteGateway = (id: string) => {
-    if (deleteGateway) deleteGateway(id);
-  };
-
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
+  };
+
+  const handleItemsPerPageChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = parseInt(event.target.value);
+    if (!isNaN(value) && value > 0) {
+      setItemsPerPage(value);
+      setCurrentPage(1);
+    }
   };
 
   return (
@@ -29,26 +64,7 @@ const GatewaysList = () => {
       >
         Add New Gateway
       </Link>
-      <table className="w-full mt-4 bg-white border border-gray-300">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="p-4 text-left">Serial Number</th>
-            <th className="p-4 text-left">Name</th>
-            <th className="p-4 text-left">IP Address</th>
-            <th className="p-4 text-center">Devices</th>
-            <th className="p-4 text-center">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentGateways.map((gateway) => (
-            <GatewayItem
-              key={gateway._id}
-              gateway={gateway}
-              onDelete={() => handleDeleteGateway(gateway._id)}
-            />
-          ))}
-        </tbody>
-      </table>
+      <GatewayTable header={header} items={currentGateways} />
 
       {/* Pagination */}
       <div className="flex items-center justify-end mt-4">
@@ -57,6 +73,7 @@ const GatewaysList = () => {
           totalItems={gateways.length}
           itemsPerPage={itemsPerPage}
           onPageChange={handlePageChange}
+          onItemsPerPageChange={handleItemsPerPageChange}
         />
       </div>
     </div>

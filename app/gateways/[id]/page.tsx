@@ -1,12 +1,19 @@
 "use client";
 
+import GatewayDetails from "@/src/components/containers/GatewayDetails";
+import Layout from "@/src/components/layout";
 import { useParams } from "next/navigation";
+import Loading from "../loading";
+import { Suspense } from "react";
 
-const GatewayDetails = () => {
+const GatewayPage = () => {
   const params = useParams();
-  console.log("🚀 ~ file: page.tsx:8 ~ Gateway ~ params:", params)
 
-  return <div></div>;
+  return (
+    <Layout>
+      <GatewayDetails id={params.id} />
+    </Layout>
+  );
 };
 
-export default GatewayDetails;
+export default GatewayPage;

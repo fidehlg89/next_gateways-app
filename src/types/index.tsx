@@ -19,6 +19,7 @@ export type IPaginationProps = {
   totalItems: number;
   itemsPerPage: number;
   onPageChange: (pageNumber: number) => void;
+  onItemsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 export interface IDevicesListProps {

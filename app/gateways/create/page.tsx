@@ -3,7 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import Layout from "@/src/components/Layout";
+import Layout from "@/src/components/layout";
 import DevicesList from "@/src/components/containers/DevicesList";
 import { Device } from "@/src/interfaces";
 
@@ -26,8 +26,8 @@ const AddGateway = () => {
     field: keyof Device,
     value: string | number
   ) => {
-    const updatedDevices = [...devices];
-    updatedDevices[index][field] = value;
+    const updatedDevices: Device[] = [...devices];
+    updatedDevices[index][field] = value as keyof Device extends never ? string : never;
     setDevices(updatedDevices);
   };
 
@@ -120,3 +120,4 @@ const AddGateway = () => {
 };
 
 export default AddGateway;
+
