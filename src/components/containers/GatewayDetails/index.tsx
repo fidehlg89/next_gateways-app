@@ -1,57 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Device, Gateway } from "@/src/interfaces";
 import axios from "axios";
-import { Gateway, Device } from "@/src/interfaces";
 import { ToastContainer, toast } from "react-toastify";
-import DevicesInfo from "../DevicesInfo";
-import AddDevice from "./AddDevice";
+import Modal from "@/src/shared/Modal";
+import AddDevice from "../DeviceAdd";
+import EditDevice from "../DeviceEdit";
+import DevicesContainer from "../DevicesContainer";
+import { IGatewayDetailsProps } from "@/src/types";
+import GatewayInfo from "./GatewayInfo";
 
-export type GatewayDetailsProps = {
-  id: string;
+const initialDevice = {
+  uid: 1,
+  vendor: "",
+  dateCreated: new Date(),
+  status: "online"
 };
 
-const GatewayDetails = ({ id }: GatewayDetailsProps) => {
+const GatewayDetails = ({ id }: IGatewayDetailsProps) => {
   const [gateway, setGateway] = useState<Gateway | null>(null);
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [newDevice, setNewDevice] = useState<Device>(initialDevice);
+  const [editedDevice, setEditedDevice] = useState<Device | null>(null);
 
-  const [showAddDevice, setShowAddDevice] = useState(false);
-
-  const handleAddDevice = () => {
-    setShowAddDevice(true);
-  };
-
-  const handleSaveNewDevice = async (newDevice: Device) => {
-    try {
-      if (gateway) {
-        const updatedDevices = [...gateway.devices, newDevice];
-
-        const { data } = await axios.put(
-          `${process.env.API_URL}/gateways/${id}`,
-          { devices: updatedDevices }
-        );
-
-        if (data.status === 200) {
-          toast.error(`Device successfully added`);
-        }
-
-        setGateway(data);
-
-        setShowAddDevice(false);
-      }
-    } catch (error) {
-      toast.error(`Error adding new device`);
-      console.log(error);
-    }
-  };
-
-  const handleCancelAddDevice = () => {
-    setNewDevice({
-      uid: 0,
-      vendor: "",
-      status: ""
-    });
-    setShowAddDevice(false);
-  };
+  const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
     const fetchGatewayDetails = async () => {
@@ -60,6 +34,7 @@ const GatewayDetails = ({ id }: GatewayDetailsProps) => {
           `${process.env.API_URL}/gateways/${id}`
         );
         setGateway(data);
+        setDevices(data.devices);
       } catch (error) {
         console.error("Error fetching gateway details:", error);
       }
@@ -67,6 +42,67 @@ const GatewayDetails = ({ id }: GatewayDetailsProps) => {
 
     fetchGatewayDetails();
   }, [id]);
+
+  const handleDeviceChange = (field: keyof Device, value: string | number) => {
+    setNewDevice((prevState) => ({
+      ...prevState,
+      [field]: value
+    }));
+  };
+
+  const handleSaveDevice = async () => {
+    const updatedDevices = [...devices, newDevice];
+    setDevices(updatedDevices);
+    setShowModal(false);
+
+    try {
+      const { data, status } = await axios.put(
+        `${process.env.API_URL}/gateways/${id}`,
+        { devices: updatedDevices }
+      );
+
+      if (status === 200) {
+        toast.success(`Device successfully updated`);
+
+        setGateway(data);
+        setDevices(data.devices);
+        setEditedDevice(null);
+      }
+    } catch (error) {
+      toast.error(`Error updating Device: ${error}`);
+    }
+    setEditedDevice(null);
+  };
+
+  const handleEditDevice = (index: number) => {
+    const deviceToEdit = devices[index];
+    setEditedDevice(deviceToEdit);
+    setShowEditModal(true);
+  };
+
+  const handleUpdateDevice = async (updatedDevice: Device) => {
+    const updatedDevices = [...devices];
+    updatedDevices[devices.indexOf(editedDevice!)] = updatedDevice;
+    setDevices(updatedDevices);
+    setShowEditModal(false);
+
+    try {
+      const { data, status } = await axios.put(
+        `${process.env.API_URL}/gateways/${id}`,
+        { devices: updatedDevices }
+      );
+
+      if (status === 200) {
+        toast.success(`Device successfully updated`);
+
+        setGateway(data);
+        setDevices(data.devices);
+        setEditedDevice(null);
+      }
+    } catch (error) {
+      toast.error(`Error updating Device: ${error}`);
+    }
+  };
 
   const handleDeleteDevice = async (index: number) => {
     try {
@@ -76,109 +112,68 @@ const GatewayDetails = ({ id }: GatewayDetailsProps) => {
         updatedDevices.splice(index, 1);
       }
 
-      const { data } = await axios.put(
+      const { data, status } = await axios.put(
         `${process.env.API_URL}/gateways/${id}`,
         { devices: updatedDevices }
       );
 
-      if (data.status === 200) {
-        toast.error(`Device successfully updated`);
-      }
+      if (status === 200) {
+        toast.success(`Device successfully updated`);
 
-      setGateway(data);
+        setGateway(data);
+        setDevices(data.devices);
+      }
     } catch (error) {
       toast.error(`Error deleting Device: ${error}`);
     }
   };
 
-  const handleEditDevice = async (index: number, device: Device) => {
-    try {
-      if (gateway) {
-        const updatedDevices = [...gateway.devices];
-
-        if (index >= 0 && index < updatedDevices.length) {
-          updatedDevices[index] = device;
-        }
-        const { data } = await axios.put(
-          `${process.env.API_URL}/gateways/${id}`,
-          { devices: updatedDevices }
-        );
-
-        if (data.status === 200) {
-          toast.error(`Device successfully updated`);
-        }
-
-        setGateway(data);
-      }
-    } catch (error) {
-      toast.error(`Error updating Device: ${error}`);
-    }
-  };
-
   return (
-    <>
+    <div>
       {gateway && (
-        <div className="max-w-xl mx-auto">
+        <div className="max-w-xl">
           <ToastContainer />
-          <div className="px-4 sm:px-0">
-            <h3 className="text-base font-semibold leading-7 text-gray-900">
-              Gateway Information
-            </h3>
-            <p className="max-w-2xl mt-1 text-sm leading-6 text-gray-500">
-              Gateway details
-            </p>
-          </div>
-          <div className="mt-6 border-t border-gray-100">
-            <dl className="divide-y divide-gray-100">
-              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                <dt className="text-sm font-medium leading-6 text-gray-900">
-                  Serial Number:
-                </dt>
-                <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  {gateway.serialNumber}
-                </dd>
-              </div>
-              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                <dt className="text-sm font-medium leading-6 text-gray-900">
-                  Name:
-                </dt>
-                <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  {gateway.name}
-                </dd>
-              </div>
-              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                <dt className="text-sm font-medium leading-6 text-gray-900">
-                  IP Address:
-                </dt>
-                <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  {gateway.ipAddress}
-                </dd>
-              </div>
-            </dl>
-          </div>
-          <DevicesInfo
-            devices={gateway.devices}
-            onDelete={handleDeleteDevice}
-            onEdit={handleEditDevice}
-          />
-          {showAddDevice ? (
-            <AddDevice
-              onSave={handleSaveNewDevice}
-              onCancel={handleCancelAddDevice}
-            />
-          ) : (
-            <div className="mt-4">
-              <button
-                onClick={handleAddDevice}
-                className="px-4 py-2 text-white bg-blue-500 rounded"
-              >
-                Add Device
-              </button>
-            </div>
-          )}
+          <GatewayInfo gateway={gateway} />
         </div>
       )}
-    </>
+      <ToastContainer />
+      <div className="mb-5">
+        <button
+          className="px-2 py-1 mt-2 text-sm text-white bg-blue-700 rounded"
+          type="button"
+          onClick={() => setShowModal(true)}
+        >
+          Add Device
+        </button>
+        {devices.length > 0 ? (
+          <DevicesContainer
+            devices={devices}
+            onRemove={handleDeleteDevice}
+            onEdit={handleEditDevice}
+          />
+        ) : (
+          <p className="text-red-700">{`There is not a new Devices added yet, you can add at least 10 Devices per Gateway`}</p>
+        )}
+      </div>
+      <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
+        <AddDevice
+          newDevice={newDevice}
+          onDeviceChange={handleDeviceChange}
+          onSaveDevice={handleSaveDevice}
+        />
+      </Modal>
+      {editedDevice && (
+        <Modal
+          isVisible={showEditModal}
+          onClose={() => setShowEditModal(false)}
+        >
+          <EditDevice
+            device={editedDevice}
+            onUpdateDevice={handleUpdateDevice}
+          />
+        </Modal>
+      )}
+    </div>
   );
 };
 

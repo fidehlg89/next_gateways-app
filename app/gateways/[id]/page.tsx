@@ -12,7 +12,7 @@ const GatewayPage = () => {
   return (
     <Layout>
       <Suspense fallback={<Loading />}>
-        <GatewayDetails id={params.id} />
+        {params?.id && <GatewayDetails id={params.id} />}
       </Suspense>
     </Layout>
   );

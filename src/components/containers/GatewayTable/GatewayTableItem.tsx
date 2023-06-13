@@ -2,12 +2,12 @@ import { Gateway } from "@/src/interfaces";
 import React from "react";
 import { useRouter } from "next/navigation";
 
-type IGatewayItemProps = {
+type IGatewayTableItemProps = {
   gateway: Gateway;
   onDelete: () => void;
 };
 
-const GatewayItem = ({ gateway, onDelete }: IGatewayItemProps) => {
+const GatewayTableItem = ({ gateway, onDelete }: IGatewayTableItemProps) => {
   const router = useRouter();
   return (
     <tr className="bg-white">
@@ -69,4 +69,4 @@ const GatewayItem = ({ gateway, onDelete }: IGatewayItemProps) => {
   );
 };
 
-export default GatewayItem;
+export default GatewayTableItem;

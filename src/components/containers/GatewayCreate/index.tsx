@@ -1,9 +1,13 @@
 "use client";
-import { Device } from "@/src/interfaces";
+
 import React, { useState } from "react";
-import DevicesList from "../DevicesList";
+import { Device } from "@/src/interfaces";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import Modal from "@/src/shared/Modal";
+import AddDevice from "../DeviceAdd";
+import EditDevice from "../DeviceEdit";
+import DevicesContainer from "../DevicesContainer";
 
 const GatewayCreate = () => {
   const [serialNumber, setSerialNumber] = useState("");
@@ -11,25 +15,14 @@ const GatewayCreate = () => {
   const [ipAddress, setIpAddress] = useState("");
   const [devices, setDevices] = useState<Device[]>([]);
 
-  const handleAddDevice = (e: React.FormEvent) => {
-    e.preventDefault();
-    setDevices([
-      ...devices,
-      { uid: 0, vendor: "", dateCreated: new Date(), status: "online" }
-    ]);
-  };
+  const [newDevice, setNewDevice] = useState<Device>({
+    uid: 1,
+    vendor: "",
+    dateCreated: new Date(),
+    status: ""
+  });
 
-  const handleDeviceChange = (
-    index: number,
-    field: keyof Device,
-    value: string | number
-  ) => {
-    const updatedDevices: Device[] = [...devices];
-    updatedDevices[index][field] = value as keyof Device extends never
-      ? string
-      : never;
-    setDevices(updatedDevices);
-  };
+  const [editedDevice, setEditedDevice] = useState<Device | null>(null);
 
   const handleRemoveDevice = (index: number) => {
     const updatedDevices = [...devices];
@@ -57,12 +50,47 @@ const GatewayCreate = () => {
     }
   };
 
+  const [showModal, setShowModal] = useState(false);
+
+  const handleSaveDevice = () => {
+    const updatedDevices = [...devices, newDevice];
+    setDevices(updatedDevices);
+    setShowModal(false);
+    setNewDevice({
+      uid: 0,
+      vendor: "",
+      dateCreated: new Date(),
+      status: "online"
+    });
+  };
+
+  const handleEditDevice = (index: number) => {
+    const deviceToEdit = devices[index];
+    setEditedDevice(deviceToEdit);
+    setShowModal(true);
+  };
+
+  const handleUpdateDevice = (updatedDevice: Device) => {
+    const updatedDevices = [...devices];
+    updatedDevices[devices.indexOf(editedDevice!)] = updatedDevice;
+    setDevices(updatedDevices);
+    setShowModal(false);
+    setEditedDevice(null);
+  };
+
+  const handleDeviceChange = (field: keyof Device, value: string | number) => {
+    setNewDevice((prevState) => ({
+      ...prevState,
+      [field]: value
+    }));
+  };
+
   return (
-    <div className="max-w-md mx-auto">
+    <div className="w-full">
       <ToastContainer />
       <h1 className="mb-4 text-2xl font-bold">Add Gateway</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-5">
+      <form onSubmit={handleSubmit} className="grid grid-cols-4">
+        <div className="col-span-2 mb-5">
           <div className="mb-4">
             <label className="block mb-2">
               Serial Number:
@@ -97,23 +125,48 @@ const GatewayCreate = () => {
             </label>
           </div>
         </div>
-        <div className="mb-5">
-          <DevicesList
-            devices={devices}
-            onAddDevice={handleAddDevice}
-            onDeviceChange={handleDeviceChange}
-            onRemoveDevice={handleRemoveDevice}
-          />
-        </div>
-        <div className="mb-4">
+        <div className="col-span-3 mb-5">
           <button
-            type="submit"
+            className="px-2 py-1 mt-2 text-sm text-white bg-blue-700 rounded"
+            type="button"
+            onClick={() => setShowModal(true)}
+          >
+            Add Device
+          </button>
+          {devices.length > 0 ? (
+            <DevicesContainer
+              devices={devices}
+              onRemove={handleRemoveDevice}
+              onEdit={handleEditDevice}
+            />
+          ) : (
+            <p className="text-red-700">{`There is not a new Devices added yet, you can add at least 10 Devices per Gateway`}</p>
+          )}
+        </div>
+        <div className="col-span-2 mb-5">
+          <button
             className="px-4 py-2 text-white bg-green-500 rounded"
+            type="submit"
           >
             Save Gateway
           </button>
         </div>
       </form>
+      <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
+        <AddDevice
+          newDevice={newDevice}
+          onDeviceChange={handleDeviceChange}
+          onSaveDevice={handleSaveDevice}
+        />
+      </Modal>
+      {editedDevice && (
+        <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
+          <EditDevice
+            device={editedDevice}
+            onUpdateDevice={handleUpdateDevice}
+          />
+        </Modal>
+      )}
     </div>
   );
 };

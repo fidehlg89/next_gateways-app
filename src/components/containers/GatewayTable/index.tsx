@@ -1,6 +1,6 @@
 import { Gateway } from "@/src/interfaces";
 import React from "react";
-import GatewayItem from "../GatewayItem";
+import GatewayTableItem from "./GatewayTableItem";
 import useContext from "@/src/hooks/useContext";
 
 export type IGatewayTableProps = {
@@ -23,8 +23,8 @@ const GatewayTable = ({ header, items }: IGatewayTableProps) => {
     <table className="w-full mt-4 bg-white border border-gray-300">
       <thead>
         <tr className="bg-gray-200">
-          {header.map((column, index) => (
-            <th key={index} className={`p-4 ${column.className}`}>
+          {header.map((column) => (
+            <th key={column.name} className={`p-4 ${column.className}`}>
               {column.text}
             </th>
           ))}
@@ -32,7 +32,7 @@ const GatewayTable = ({ header, items }: IGatewayTableProps) => {
       </thead>
       <tbody>
         {items.map((gateway) => (
-          <GatewayItem
+          <GatewayTableItem
             key={gateway._id}
             gateway={gateway}
             onDelete={() => handleDeleteGateway(gateway._id)}

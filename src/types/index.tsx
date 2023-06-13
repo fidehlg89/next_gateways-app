@@ -22,13 +22,12 @@ export type IPaginationProps = {
   onItemsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-export interface IDevicesListProps {
+export type IDevicesListProps = {
   devices: Device[];
-  onAddDevice: (e: React.FormEvent) => void;
-  onDeviceChange: (
-    index: number,
-    field: keyof Device,
-    value: string | number
-  ) => void;
-  onRemoveDevice: (index: number) => void;
-}
+  onRemove: (index: number) => void;
+  onEdit: (index: number) => void;
+};
+
+export type IGatewayDetailsProps = {
+  id: string | string[];
+};
