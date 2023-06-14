@@ -10,7 +10,7 @@ import DeviceEdit from "../../DeviceEdit";
 import DevicesContainer from "../DevicesContainer";
 import { IGatewayDetailsProps } from "@/src/types";
 import GatewayInfo from "./GatewayInfo";
-import ErrorPage from "@/src/pages/Error";
+import ErrorPage from "@/src/components/Error";
 import { error } from "console";
 
 const initialDevice = {

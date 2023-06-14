@@ -7,7 +7,7 @@ import Layout from "@/src/components/layouts";
 import { Gateway } from "@/src/interfaces";
 import GatewayContext from "@/src/context/GatewayContext";
 import { ToastContainer, toast } from "react-toastify";
-import ErrorPage from "@/src/pages/Error";
+import ErrorPage from "@/src/components/Error";
 
 const GatewaysPage = () => {
   const [gateways, setGateways] = useState<Gateway[]>([]);

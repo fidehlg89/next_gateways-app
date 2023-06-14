@@ -66,3 +66,7 @@ export type IDevicesTableProps = {
   onRemove: (i: number) => void;
   onEdit: (i: number) => void;
 };
+
+export type IErrorPageProps = {
+  error: string
+}

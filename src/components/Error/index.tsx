@@ -1,9 +1,6 @@
+import { IErrorPageProps } from '@/src/types'
 import Link from 'next/link'
 import React from 'react'
-
-export type IErrorPageProps = {
-    error: string
-}
 
 const ErrorPage = ({error}: IErrorPageProps) => {
 
