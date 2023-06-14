@@ -17,6 +17,5 @@ describe("GatewayTableItem", () => {
 
   it.skip("calls renders component", () => {
 
-
   });
 });
