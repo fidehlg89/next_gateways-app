@@ -55,3 +55,14 @@ export type IEditDeviceProps = {
   device: Device;
   onUpdateDevice: (updatedDevice: Device) => void;
 };
+
+export type IDevicesTableProps = {
+  header: {
+    name: string;
+    className: string;
+    text: string;
+  }[];
+  items: Device[];
+  onRemove: (i: number) => void;
+  onEdit: (i: number) => void;
+};

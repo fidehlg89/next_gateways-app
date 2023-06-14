@@ -10,6 +10,8 @@ import DeviceEdit from "../../DeviceEdit";
 import DevicesContainer from "../DevicesContainer";
 import { IGatewayDetailsProps } from "@/src/types";
 import GatewayInfo from "./GatewayInfo";
+import ErrorPage from "@/src/pages/Error";
+import { error } from "console";
 
 const initialDevice = {
   uid: 1,
@@ -19,11 +21,11 @@ const initialDevice = {
 };
 
 const GatewayDetails = ({ id }: IGatewayDetailsProps) => {
-
   const [gateway, setGateway] = useState<Gateway | null>(null);
   const [devices, setDevices] = useState<Device[]>([]);
   const [newDevice, setNewDevice] = useState<Device>(initialDevice);
   const [editedDevice, setEditedDevice] = useState<Device | null>(null);
+  const [error, setError] = useState("");
 
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -37,6 +39,9 @@ const GatewayDetails = ({ id }: IGatewayDetailsProps) => {
         setGateway(data);
         setDevices(data.devices);
       } catch (error) {
+        setError(
+          `Failed to fetch gateways. Please check your internet connection. ${error}`
+        );
         console.error("Error fetching gateway details:", error);
       }
     };
@@ -129,52 +134,52 @@ const GatewayDetails = ({ id }: IGatewayDetailsProps) => {
     }
   };
 
+  if (error) {
+    return <ErrorPage error={error} />;
+  }
+
   return (
-    <div>
-      {gateway && (
-        <div className="max-w-xl">
-          <ToastContainer />
-          <GatewayInfo gateway={gateway} />
+      <div className="max-w-xl">
+        <ToastContainer />
+        {gateway && <GatewayInfo gateway={gateway} />}
+
+        <div className="mb-5">
+          <button
+            className="px-2 py-1 mt-2 text-sm text-white bg-blue-700 rounded"
+            type="button"
+            onClick={() => setShowModal(true)}
+          >
+            Add Device
+          </button>
+          {devices.length > 0 ? (
+            <DevicesContainer
+              devices={devices}
+              onRemove={handleDeleteDevice}
+              onEdit={handleEditDevice}
+            />
+          ) : (
+            <p className="text-red-700">{`There is not a new Devices added yet, you can add at least 10 Devices per Gateway`}</p>
+          )}
         </div>
-      )}
-      <ToastContainer />
-      <div className="mb-5">
-        <button
-          className="px-2 py-1 mt-2 text-sm text-white bg-blue-700 rounded"
-          type="button"
-          onClick={() => setShowModal(true)}
-        >
-          Add Device
-        </button>
-        {devices.length > 0 ? (
-          <DevicesContainer
-            devices={devices}
-            onRemove={handleDeleteDevice}
-            onEdit={handleEditDevice}
-          />
-        ) : (
-          <p className="text-red-700">{`There is not a new Devices added yet, you can add at least 10 Devices per Gateway`}</p>
-        )}
-      </div>
-      <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
-        <DeviceAdd
-          newDevice={newDevice}
-          onDeviceChange={handleDeviceChange}
-          onSaveDevice={handleSaveDevice}
-        />
-      </Modal>
-      {editedDevice && (
-        <Modal
-          isVisible={showEditModal}
-          onClose={() => setShowEditModal(false)}
-        >
-          <DeviceEdit
-            device={editedDevice}
-            onUpdateDevice={handleUpdateDevice}
+        <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
+          <DeviceAdd
+            newDevice={newDevice}
+            onDeviceChange={handleDeviceChange}
+            onSaveDevice={handleSaveDevice}
           />
         </Modal>
-      )}
-    </div>
+        {editedDevice && (
+          <Modal
+            isVisible={showEditModal}
+            onClose={() => setShowEditModal(false)}
+          >
+            <DeviceEdit
+              device={editedDevice}
+              onUpdateDevice={handleUpdateDevice}
+            />
+          </Modal>
+        )}
+      </div>
   );
 };
 

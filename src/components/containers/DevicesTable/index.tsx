@@ -1,16 +1,5 @@
-import { Device } from "@/src/interfaces";
 import React from "react";
-
-export type IDevicesTableProps = {
-  header: {
-    name: string;
-    className: string;
-    text: string;
-  }[];
-  items: Device[];
-  onRemove: (i: number) => void;
-  onEdit: (i: number) => void;
-};
+import { IDevicesTableProps } from "@/src/types";
 
 const DevicesTable = ({
   header,
