@@ -5,8 +5,8 @@ import { Device, Gateway } from "@/src/interfaces";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import Modal from "@/src/shared/Modal";
-import AddDevice from "../DeviceAdd";
-import EditDevice from "../DeviceEdit";
+import DeviceAdd from "../../DeviceAdd";
+import DeviceEdit from "../../DeviceEdit";
 import DevicesContainer from "../DevicesContainer";
 import { IGatewayDetailsProps } from "@/src/types";
 import GatewayInfo from "./GatewayInfo";
@@ -19,6 +19,7 @@ const initialDevice = {
 };
 
 const GatewayDetails = ({ id }: IGatewayDetailsProps) => {
+
   const [gateway, setGateway] = useState<Gateway | null>(null);
   const [devices, setDevices] = useState<Device[]>([]);
   const [newDevice, setNewDevice] = useState<Device>(initialDevice);
@@ -156,7 +157,7 @@ const GatewayDetails = ({ id }: IGatewayDetailsProps) => {
         )}
       </div>
       <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
-        <AddDevice
+        <DeviceAdd
           newDevice={newDevice}
           onDeviceChange={handleDeviceChange}
           onSaveDevice={handleSaveDevice}
@@ -167,7 +168,7 @@ const GatewayDetails = ({ id }: IGatewayDetailsProps) => {
           isVisible={showEditModal}
           onClose={() => setShowEditModal(false)}
         >
-          <EditDevice
+          <DeviceEdit
             device={editedDevice}
             onUpdateDevice={handleUpdateDevice}
           />

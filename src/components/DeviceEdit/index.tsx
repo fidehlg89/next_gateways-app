@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import { Device } from "@/src/interfaces";
+import { IEditDeviceProps } from "@/src/types";
 
-type IEditDeviceProps = {
-  device: Device;
-  onUpdateDevice: (updatedDevice: Device) => void;
-};
-
-const EditDevice: React.FC<IEditDeviceProps> = ({ device, onUpdateDevice }) => {
+const DeviceEdit = ({ device, onUpdateDevice }: IEditDeviceProps) => {
   const [editedDevice, setEditedDevice] = useState<Device>(device);
 
   const handleInputChange = (
@@ -71,4 +67,4 @@ const EditDevice: React.FC<IEditDeviceProps> = ({ device, onUpdateDevice }) => {
   );
 };
 
-export default EditDevice;
+export default DeviceEdit;

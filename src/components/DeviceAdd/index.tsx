@@ -7,7 +7,7 @@ type IAddDeviceProps = {
   onSaveDevice: () => void;
 };
 
-const AddDevice = ({ newDevice, onDeviceChange, onSaveDevice }: IAddDeviceProps) => {
+const DeviceAdd = ({ newDevice, onDeviceChange, onSaveDevice }: IAddDeviceProps) => {
   return (
     <div>
       <h3>New Device</h3>
@@ -63,4 +63,4 @@ const AddDevice = ({ newDevice, onDeviceChange, onSaveDevice }: IAddDeviceProps)
   );
 };
 
-export default AddDevice;
+export default DeviceAdd;

@@ -7,7 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import Modal from "@/src/shared/Modal";
 import AddDevice from "../DeviceAdd";
 import EditDevice from "../DeviceEdit";
-import DevicesContainer from "../DevicesContainer";
+import DevicesContainer from "../containers/DevicesContainer";
 
 const GatewayCreate = () => {
   const [serialNumber, setSerialNumber] = useState("");

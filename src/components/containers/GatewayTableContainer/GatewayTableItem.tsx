@@ -1,11 +1,8 @@
-import { Gateway } from "@/src/interfaces";
+'use client'
+
 import React from "react";
 import { useRouter } from "next/navigation";
-
-type IGatewayTableItemProps = {
-  gateway: Gateway;
-  onDelete: () => void;
-};
+import { IGatewayTableItemProps } from "@/src/types";
 
 const GatewayTableItem = ({ gateway, onDelete }: IGatewayTableItemProps) => {
   const router = useRouter();

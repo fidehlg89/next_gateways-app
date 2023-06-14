@@ -14,6 +14,29 @@ export type IGatewayContextProps = {
   deleteGateway?: (id: string) => void;
 };
 
+export type IGatewayTableHeaderProps = {
+  header: {
+    name: string;
+    className: string;
+    text: string;
+  }[];
+};
+
+export type IGatewayTableContainerProps = IGatewaysProps & {};
+
+export type IGatewayTableProps = IGatewaysProps & {
+  onGatewayDelete: (id: string) => void;
+};
+
+export type IGatewayTableItemProps = {
+  gateway: Gateway;
+  onDelete: () => void;
+};
+
+export type IGatewayDetailsProps = {
+  id: string | string[];
+};
+
 export type IPaginationProps = {
   currentPage: number;
   totalItems: number;
@@ -28,6 +51,7 @@ export type IDevicesListProps = {
   onEdit: (index: number) => void;
 };
 
-export type IGatewayDetailsProps = {
-  id: string | string[];
+export type IEditDeviceProps = {
+  device: Device;
+  onUpdateDevice: (updatedDevice: Device) => void;
 };

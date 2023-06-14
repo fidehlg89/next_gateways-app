@@ -6,10 +6,12 @@ import GatewaysContainer from "@/src/components/containers/GatewaysContainer";
 import Layout from "@/src/components/layouts";
 import { Gateway } from "@/src/interfaces";
 import GatewayContext from "@/src/context/GatewayContext";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import ErrorPage from "@/src/pages/Error";
 
-const Home = () => {
+const GatewaysPage = () => {
   const [gateways, setGateways] = useState<Gateway[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchData = async () => {
     try {
@@ -17,6 +19,9 @@ const Home = () => {
       setGateways(response.data);
     } catch (error) {
       console.error("Failed to fetch gateways:", error);
+      setError(
+        `Failed to fetch gateways. Please check your internet connection. ${error}`
+      );
     }
   };
 
@@ -27,7 +32,7 @@ const Home = () => {
       );
       console.log(response.data);
       fetchData();
-      toast.success(`${response.data.messaje}`)
+      toast.success(`${response.data.messaje}`);
     } catch (error) {
       console.error("Error deleting gateway:", error);
     }
@@ -37,8 +42,15 @@ const Home = () => {
     fetchData();
   }, [setGateways]);
 
+  if (error) {
+    return (
+      <ErrorPage error={error} />
+    );
+  }
+
   return (
     <Layout>
+      <ToastContainer />
       <GatewayContext.Provider value={{ gateways, deleteGateway }}>
         <GatewaysContainer />
       </GatewayContext.Provider>
@@ -46,4 +58,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default GatewaysPage;

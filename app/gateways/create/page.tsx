@@ -1,4 +1,4 @@
-import GatewayCreate from "@/src/components/containers/GatewayCreate";
+import GatewayCreate from "@/src/components/GatewayCreate";
 import Layout from "@/src/components/layouts";
 
 const GatewayCreatePage = () => {
