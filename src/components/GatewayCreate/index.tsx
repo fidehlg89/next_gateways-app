@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Device } from "@/src/interfaces";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -10,6 +11,12 @@ import EditDevice from "../DeviceEdit";
 import DevicesContainer from "../containers/DevicesContainer";
 
 const GatewayCreate = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue
+  } = useForm();
   const [serialNumber, setSerialNumber] = useState("");
   const [name, setName] = useState("");
   const [ipAddress, setIpAddress] = useState("");
@@ -30,9 +37,7 @@ const GatewayCreate = () => {
     setDevices(updatedDevices);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const onSubmit = handleSubmit(async () => {
     const newGateway = {
       serialNumber,
       name,
@@ -48,7 +53,7 @@ const GatewayCreate = () => {
     } catch (error) {
       toast.error("Failed to add gateway. Please try again later.");
     }
-  };
+  });
 
   const [showModal, setShowModal] = useState(false);
 
@@ -89,18 +94,24 @@ const GatewayCreate = () => {
     <div className="w-full">
       <ToastContainer />
       <h1 className="mb-4 text-2xl font-bold">Add Gateway</h1>
-      <form onSubmit={handleSubmit} className="grid grid-cols-4">
+      <form onSubmit={onSubmit} className="grid grid-cols-4">
         <div className="col-span-2 mb-5">
           <div className="mb-4">
-            <label className="block mb-2">
+            <label className="block">
               Serial Number:
               <input
-                className="w-full px-3 py-2 border border-gray-300 rounded"
+                className={`w-full px-3 py-2 border border-gray-300 rounded ${
+                  errors.title ? "border-red-500" : ""
+                }`}
                 type="text"
-                value={serialNumber}
-                onChange={(e) => setSerialNumber(e.target.value)}
+                {...register("serialNumber", { required: true })}
               />
             </label>
+            {errors.serialNumber && (
+              <span className="text-sm font-light text-red-500 ">
+                Serial Number field is required
+              </span>
+            )}
           </div>
           <div className="mb-4">
             <label className="block mb-2">

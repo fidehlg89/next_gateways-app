@@ -1,5 +1,6 @@
 import { Device } from "@/src/interfaces";
 import React from "react";
+import { useForm } from "react-hook-form";
 
 type IAddDeviceProps = {
   newDevice: Device;
@@ -7,7 +8,12 @@ type IAddDeviceProps = {
   onSaveDevice: () => void;
 };
 
-const DeviceAdd = ({ newDevice, onDeviceChange, onSaveDevice }: IAddDeviceProps) => {
+const DeviceAdd = ({
+  newDevice,
+  onDeviceChange,
+  onSaveDevice
+}: IAddDeviceProps) => {
+
   return (
     <div>
       <h3>New Device</h3>
