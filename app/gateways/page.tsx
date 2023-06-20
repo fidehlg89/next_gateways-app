@@ -8,6 +8,7 @@ import { Gateway } from "@/src/interfaces";
 import GatewayContext from "@/src/context/GatewayContext";
 import { ToastContainer, toast } from "react-toastify";
 import ErrorPage from "@/src/components/Error";
+import { deleteGateway } from "@/src/api/gateways.api";
 
 const GatewaysPage = () => {
   const [gateways, setGateways] = useState<Gateway[]>([]);
@@ -25,14 +26,13 @@ const GatewaysPage = () => {
     }
   };
 
-  const deleteGateway = async (id: string) => {
+  const onDeleteGateway = async (id: string) => {
     try {
-      const response = await axios.delete(
-        `${process.env.API_URL}/gateways/${id}`
-      );
-      console.log(response.data);
-      fetchData();
-      toast.success(`${response.data.messaje}`);
+      const {
+        data: { message }
+      } = await deleteGateway(id);
+      setGateways(gateways.filter((item) => item._id !== id));
+      toast.success(`${message}`);
     } catch (error) {
       console.error("Error deleting gateway:", error);
     }
@@ -43,15 +43,13 @@ const GatewaysPage = () => {
   }, [setGateways]);
 
   if (error) {
-    return (
-      <ErrorPage error={error} />
-    );
+    return <ErrorPage error={error} />;
   }
 
   return (
     <Layout>
       <ToastContainer />
-      <GatewayContext.Provider value={{ gateways, deleteGateway }}>
+      <GatewayContext.Provider value={{ gateways, onDeleteGateway }}>
         <GatewaysContainer />
       </GatewayContext.Provider>
     </Layout>

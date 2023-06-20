@@ -11,7 +11,7 @@ export type IGatewaysProps = {
 export type IGatewayContextProps = {
   gateways: Gateway[];
   addGateway?: (gateway: Gateway) => void;
-  deleteGateway?: (id: string) => void;
+  onDeleteGateway?: (id: string) => void;
 };
 
 export type IGatewayTableHeaderProps = {

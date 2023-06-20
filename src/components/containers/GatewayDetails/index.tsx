@@ -11,7 +11,7 @@ import DevicesContainer from "../DevicesContainer";
 import { IGatewayDetailsProps } from "@/src/types";
 import GatewayInfo from "./GatewayInfo";
 import ErrorPage from "@/src/components/Error";
-import { error } from "console";
+import { getAllGateways } from "@/src/api/gateways.api";
 
 const initialDevice = {
   uid: 1,
@@ -33,9 +33,7 @@ const GatewayDetails = ({ id }: IGatewayDetailsProps) => {
   useEffect(() => {
     const fetchGatewayDetails = async () => {
       try {
-        const { data } = await axios.get<Gateway>(
-          `${process.env.API_URL}/gateways/${id}`
-        );
+        const { data } = await getAllGateways();
         setGateway(data);
         setDevices(data.devices);
       } catch (error) {
@@ -139,47 +137,47 @@ const GatewayDetails = ({ id }: IGatewayDetailsProps) => {
   }
 
   return (
-      <div className="max-w-xl">
-        <ToastContainer />
-        {gateway && <GatewayInfo gateway={gateway} />}
+    <div className="max-w-xl">
+      <ToastContainer />
+      {gateway && <GatewayInfo gateway={gateway} />}
 
-        <div className="mb-5">
-          <button
-            className="px-2 py-1 mt-2 text-sm text-white bg-blue-700 rounded"
-            type="button"
-            onClick={() => setShowModal(true)}
-          >
-            Add Device
-          </button>
-          {devices.length > 0 ? (
-            <DevicesContainer
-              devices={devices}
-              onRemove={handleDeleteDevice}
-              onEdit={handleEditDevice}
-            />
-          ) : (
-            <p className="text-red-700">{`There is not a new Devices added yet, you can add at least 10 Devices per Gateway`}</p>
-          )}
-        </div>
-        <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
-          <DeviceAdd
-            newDevice={newDevice}
-            onDeviceChange={handleDeviceChange}
-            onSaveDevice={handleSaveDevice}
+      <div className="mb-5">
+        <button
+          className="px-2 py-1 mt-2 text-sm text-white bg-blue-700 rounded"
+          type="button"
+          onClick={() => setShowModal(true)}
+        >
+          Add Device
+        </button>
+        {devices.length > 0 ? (
+          <DevicesContainer
+            devices={devices}
+            onRemove={handleDeleteDevice}
+            onEdit={handleEditDevice}
           />
-        </Modal>
-        {editedDevice && (
-          <Modal
-            isVisible={showEditModal}
-            onClose={() => setShowEditModal(false)}
-          >
-            <DeviceEdit
-              device={editedDevice}
-              onUpdateDevice={handleUpdateDevice}
-            />
-          </Modal>
+        ) : (
+          <p className="text-red-700">{`There is not a new Devices added yet, you can add at least 10 Devices per Gateway`}</p>
         )}
       </div>
+      <Modal isVisible={showModal} onClose={() => setShowModal(false)}>
+        <DeviceAdd
+          newDevice={newDevice}
+          onDeviceChange={handleDeviceChange}
+          onSaveDevice={handleSaveDevice}
+        />
+      </Modal>
+      {editedDevice && (
+        <Modal
+          isVisible={showEditModal}
+          onClose={() => setShowEditModal(false)}
+        >
+          <DeviceEdit
+            device={editedDevice}
+            onUpdateDevice={handleUpdateDevice}
+          />
+        </Modal>
+      )}
+    </div>
   );
 };
 
