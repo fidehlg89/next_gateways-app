@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
 import { Device } from "@/src/interfaces";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -9,6 +8,7 @@ import Modal from "@/src/shared/Modal";
 import AddDevice from "../DeviceAdd";
 import EditDevice from "../DeviceEdit";
 import DevicesContainer from "../containers/DevicesContainer";
+import { useForm } from "react-hook-form";
 
 const GatewayCreate = () => {
   const {
