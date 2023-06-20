@@ -6,6 +6,7 @@ import { IGatewayTableItemProps } from "@/src/types";
 
 const GatewayTableItem = ({ gateway, onDelete }: IGatewayTableItemProps) => {
   const router = useRouter();
+
   return (
     <tr className="bg-white">
       <td className="p-2">{gateway.serialNumber}</td>

@@ -4,7 +4,7 @@ import { IGatewayContextProps } from "../types";
 const GatewayContext = createContext<IGatewayContextProps>({
   gateways: [],
   addGateway: () => {},
-  deleteGateway: () => {},
+  onDeleteGateway: () => {}
 });
 
-export default GatewayContext
+export default GatewayContext;

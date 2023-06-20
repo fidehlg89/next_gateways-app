@@ -5,17 +5,18 @@ import { IGatewayTableContainerProps } from "@/src/types";
 import { Pagination } from "../../utils/Pagination";
 
 const GatewayTableContainer = ({ gateways }: IGatewayTableContainerProps) => {
-
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentGateways = gateways.slice(indexOfFirstItem, indexOfLastItem);
 
-  const { deleteGateway } = useContext();
+  const { onDeleteGateway } = useContext();
 
-  const handleDeleteGateway = (id: string) => {
-    if (deleteGateway) deleteGateway(id);
+  const handleDeleteGateway = async (id: string) => {
+    if (onDeleteGateway) {
+      await onDeleteGateway(id);
+    }
   };
 
   const handlePageChange = (pageNumber: number) => {
@@ -34,7 +35,10 @@ const GatewayTableContainer = ({ gateways }: IGatewayTableContainerProps) => {
 
   return (
     <>
-      <GatewayTable gateways={currentGateways} onGatewayDelete={handleDeleteGateway} />
+      <GatewayTable
+        gateways={currentGateways}
+        onGatewayDelete={handleDeleteGateway}
+      />
       {/* Pagination */}
       <div className="flex items-center justify-end mt-4">
         <Pagination
