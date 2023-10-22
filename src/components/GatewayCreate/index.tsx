@@ -37,8 +37,8 @@ const GatewayCreate = () => {
     setDevices(updatedDevices);
   };
 
-  const onSubmit = handleSubmit (async (data) => {
-    console.log("🚀 ~ file: index.tsx:42 ~ onSubmit ~ data:", data)
+  const onSubmit = handleSubmit(async (data) => {
+    console.log("🚀 ~ file: index.tsx:42 ~ onSubmit ~ data:", data);
 
     try {
       await axios.post(`${process.env.API_URL}/gateways`, data, {
@@ -48,7 +48,7 @@ const GatewayCreate = () => {
     } catch (error) {
       toast.error("Failed to add gateway. Please try again later.");
     }
-  } );
+  });
 
   const [showModal, setShowModal] = useState(false);
 
@@ -91,7 +91,7 @@ const GatewayCreate = () => {
       <h1 className="mb-4 text-2xl font-bold">Add Gateway</h1>
       <form onSubmit={onSubmit} className="grid grid-cols-4">
         <div className="col-span-2 mb-5">
-        <div className="mb-4">
+          <div className="mb-4">
             <label className="block">
               Serial Number:
               <input
