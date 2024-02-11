@@ -16,14 +16,14 @@ Follow these steps to set up and run the project locally:
 1. Clone this repository to your local machine:
 
    ```bash
-   git clone https://github.com/fidehlg89/gateways-app.git
+   git clone https://github.com/fidehlg89/next_gateways-app.git
    or
-   git clone git@github.com:fidehlg89/gateways-app.git
+   git clone git@github.com:fidehlg89/next_gateways-app.git
 
 2. Install the proyect
 
     ```bash
-    cd gateways-app
+    cd next_gateways-app
 
 3. Set up the environment variables:
 
