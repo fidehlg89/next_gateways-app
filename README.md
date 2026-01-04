@@ -44,3 +44,7 @@ Follow these steps to set up and run the project locally:
     yarn start: Starts the application in production mode.
     yarn lint: Runs the linter to check code formatting.
     yarn test: Runs the unit tests.
+
+5. Url
+
+- https://gateways-app.netlify.app/
