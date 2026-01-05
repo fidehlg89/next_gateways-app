@@ -30,7 +30,7 @@ export const Pagination = ({
         step="1"
         value={itemsPerPage}
         onChange={onItemsPerPageChange}
-        className="w-16 px-2 py-1 text-sm border focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        className="w-16 px-2 py-1 text-sm border focus:outline-hidden focus:ring-blue-500 focus:border-blue-500"
       />
       <nav className="flex items-center">
         {/* Previous page button */}

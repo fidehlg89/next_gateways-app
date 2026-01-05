@@ -112,7 +112,7 @@ const GatewayCreate = () => {
             <label className="block mb-2">
               Name:
               <input
-                className="w-full px-3 py-2 border border-gray-300 rounded"
+                className="w-full px-3 py-2 border border-gray-300 rounded-sm"
                 type="text"
                 {...register("name", { required: false })}
               />
@@ -122,7 +122,7 @@ const GatewayCreate = () => {
             <label className="block mb-2">
               IP Address:
               <input
-                className="w-full px-3 py-2 border border-gray-300 rounded"
+                className="w-full px-3 py-2 border border-gray-300 rounded-sm"
                 type="text"
                 {...register("ipAddress", { required: true })}
               />
@@ -131,7 +131,7 @@ const GatewayCreate = () => {
         </div>
         <div className="col-span-3 mb-5">
           <button
-            className="px-2 py-1 mt-2 text-sm text-white bg-blue-700 rounded"
+            className="px-2 py-1 mt-2 text-sm text-white bg-blue-700 rounded-sm"
             type="button"
             onClick={() => setShowModal(true)}
           >
@@ -149,7 +149,7 @@ const GatewayCreate = () => {
         </div>
         <div className="col-span-2 mb-5">
           <button
-            className="px-4 py-2 text-white bg-green-500 rounded"
+            className="px-4 py-2 text-white bg-green-500 rounded-sm"
             type="submit"
           >
             Save Gateway

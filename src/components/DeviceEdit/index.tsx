@@ -27,7 +27,7 @@ const DeviceEdit = ({ device, onUpdateDevice }: IEditDeviceProps) => {
         <label className="block mb-2">
           UID:
           <input
-            className="w-full px-3 py-2 border border-gray-300 rounded"
+            className="w-full px-3 py-2 border border-gray-300 rounded-sm"
             type="number"
             name="uid"
             value={editedDevice.uid}
@@ -37,7 +37,7 @@ const DeviceEdit = ({ device, onUpdateDevice }: IEditDeviceProps) => {
         <label className="block mb-2">
           Vendor:
           <input
-            className="w-full px-3 py-2 border border-gray-300 rounded"
+            className="w-full px-3 py-2 border border-gray-300 rounded-sm"
             type="text"
             name="vendor"
             value={editedDevice.vendor}
@@ -47,7 +47,7 @@ const DeviceEdit = ({ device, onUpdateDevice }: IEditDeviceProps) => {
         <label className="block mb-2">
           Status:
           <select
-            className="w-full px-3 py-2 border border-gray-300 rounded"
+            className="w-full px-3 py-2 border border-gray-300 rounded-sm"
             name="status"
             value={editedDevice.status}
             onChange={handleInputChange}
@@ -57,7 +57,7 @@ const DeviceEdit = ({ device, onUpdateDevice }: IEditDeviceProps) => {
           </select>
         </label>
         <button
-          className="px-2 py-1 text-sm text-white bg-blue-700 rounded place-self-end"
+          className="px-2 py-1 text-sm text-white bg-blue-700 rounded-sm place-self-end"
           onClick={handleUpdate}
         >
           Save Changes

@@ -145,7 +145,7 @@ const GatewayDetails = ({ id }: IGatewayDetailsProps) => {
 
         <div className="mb-5">
           <button
-            className="px-2 py-1 mt-2 text-sm text-white bg-blue-700 rounded"
+            className="px-2 py-1 mt-2 text-sm text-white bg-blue-700 rounded-sm"
             type="button"
             onClick={() => setShowModal(true)}
           >

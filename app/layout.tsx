@@ -1,5 +1,4 @@
 import "./globals.css";
-import "tailwindcss/tailwind.css";
 import { Inter } from "next/font/google";
 import "react-toastify/dist/ReactToastify.css";
 

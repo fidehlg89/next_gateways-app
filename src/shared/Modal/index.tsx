@@ -13,7 +13,7 @@ const Modal = ({ isVisible, onClose, children }: IModalProps) => {
 
   return (
     <div
-      className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-25 backdrop-blur-sm"
+      className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-25 backdrop-blur-xs"
       id="wrapper"
       onClick={handleClose}
     >

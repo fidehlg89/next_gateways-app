@@ -12,7 +12,7 @@ const GatewayTableItem = ({ gateway, onDelete }: IGatewayTableItemProps) => {
       <td className="p-2">{gateway.name}</td>
       <td className="p-2">{gateway.ipAddress}</td>
       <td className="p-2 text-center">
-        <span className="px-2 py-1 text-sm text-white bg-green-500 rounded">
+        <span className="px-2 py-1 text-sm text-white bg-green-500 rounded-sm">
           {gateway.devices.length}
         </span>
       </td>

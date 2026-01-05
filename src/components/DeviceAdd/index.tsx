@@ -22,7 +22,7 @@ const DeviceAdd = ({
         <label className="block mb-2">
           UID:
           <input
-            className="w-full px-3 py-2 border border-gray-300 rounded"
+            className="w-full px-3 py-2 border border-gray-300 rounded-sm"
             type="number"
             min={1}
             value={newDevice.uid}
@@ -32,7 +32,7 @@ const DeviceAdd = ({
         <label className="block mb-2">
           Vendor:
           <input
-            className="w-full px-3 py-2 border border-gray-300 rounded"
+            className="w-full px-3 py-2 border border-gray-300 rounded-sm"
             type="text"
             value={newDevice.vendor}
             onChange={(e) => onDeviceChange("vendor", e.target.value)}
@@ -41,7 +41,7 @@ const DeviceAdd = ({
         <label className="block mb-2">
           Created Date:
           <input
-            className="w-full px-3 py-2 border border-gray-300 rounded"
+            className="w-full px-3 py-2 border border-gray-300 rounded-sm"
             type="text"
             value={newDevice.dateCreated?.toISOString().slice(0, 10)}
             disabled
@@ -50,7 +50,7 @@ const DeviceAdd = ({
         <label className="block mb-2">
           Status:
           <select
-            className="w-full px-3 py-2 border border-gray-300 rounded"
+            className="w-full px-3 py-2 border border-gray-300 rounded-sm"
             value={newDevice.status}
             onChange={(e) => onDeviceChange("status", e.target.value)}
           >
@@ -59,7 +59,7 @@ const DeviceAdd = ({
           </select>
         </label>
         <button
-          className="px-2 py-1 text-sm text-white bg-blue-700 rounded place-self-end"
+          className="px-2 py-1 text-sm text-white bg-blue-700 rounded-sm place-self-end"
           onClick={onSaveDevice}
         >
           Save Device

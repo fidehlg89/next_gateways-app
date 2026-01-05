@@ -32,7 +32,7 @@ const DevicesTable = ({
             <td className="p-2 text-center">
               <button
                 type="button"
-                className="p-2 mr-1 text-sm text-white bg-yellow-500 rounded-md focus:outline-none hover:bg-yellow-600 hover:shadow-lg"
+                className="p-2 mr-1 text-sm text-white bg-yellow-500 rounded-md focus:outline-hidden hover:bg-yellow-600 hover:shadow-lg"
                 onClick={() => onEdit(index)}
               >
                 <svg
@@ -51,7 +51,7 @@ const DevicesTable = ({
                 </svg>
               </button>
               <button
-                className="p-2 mr-1 text-sm text-white ease-in-out bg-red-500 rounded-md focus:outline-none hover:bg-red-600 hover:shadow-lg"
+                className="p-2 mr-1 text-sm text-white ease-in-out bg-red-500 rounded-md focus:outline-hidden hover:bg-red-600 hover:shadow-lg"
                 onClick={() => onRemove(index)}
               >
                 <svg

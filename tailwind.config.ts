@@ -1,5 +1,4 @@
-import type { Config } from "tailwindcss"
-
+// removed type import to avoid moduleResolution/type declaration resolution errors
 const config = {
   darkMode: ["class"],
   content: [
@@ -75,6 +74,6 @@ const config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config
+}
 
 export default config
