@@ -8,6 +8,7 @@ import { Gateway } from "@/src/interfaces";
 import GatewayContext from "@/src/context/GatewayContext";
 import { ToastContainer, toast } from "react-toastify";
 import ErrorPage from "@/src/components/Error";
+import GatewayManagement from "./components/gateway-manager";
 
 const GatewaysPage = () => {
   const [gateways, setGateways] = useState<Gateway[]>([]);
@@ -52,7 +53,7 @@ const GatewaysPage = () => {
     <Layout>
       <ToastContainer />
       <GatewayContext.Provider value={{ gateways, deleteGateway }}>
-        <GatewaysContainer />
+        <GatewayManagement />
       </GatewayContext.Provider>
     </Layout>
   );
