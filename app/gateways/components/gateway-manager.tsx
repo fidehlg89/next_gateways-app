@@ -1,6 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import axios from "axios"
+import { Gateway, Device } from "@/src/interfaces"
+import { toast } from "react-toastify"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -25,46 +28,73 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Eye, Trash2, MoreVertical, Plus, Search, Router } from "lucide-react"
 
-interface Gateway {
-  id: string
-  serialNumber: string
-  name: string
-  ipAddress: string
-  devices: number
-  status: "online" | "offline"
-}
 
-const initialGateways: Gateway[] = [
-  {
-    id: "1",
-    serialNumber: "123ABC",
-    name: "Gateway 1",
-    ipAddress: "10.10.1.1",
-    devices: 0,
-    status: "online",
-  },
-  {
-    id: "2",
-    serialNumber: "ABC1234",
-    name: "Gateway 1",
-    ipAddress: "6.6.6.6",
-    devices: 1,
-    status: "online",
-  },
-  {
-    id: "3",
-    serialNumber: "ABC123444",
-    name: "PC-Director",
-    ipAddress: "192.168.1.100",
-    devices: 10,
-    status: "online",
-  },
-]
+
 
 export default function GatewayManagement() {
-  const [gateways, setGateways] = useState<Gateway[]>(initialGateways)
+  const [gateways, setGateways] = useState<Gateway[]>([])
   const [searchQuery, setSearchQuery] = useState("")
+  const [selectedGateway, setSelectedGateway] = useState<Gateway | null>(null)
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+  const [newGateway, setNewGateway] = useState({
+    serialNumber: "",
+    name: "",
+    ipAddress: "",
+  })
+
+  // Device creation state
+  const [devices, setDevices] = useState<Device[]>([])
+  const [newDevice, setNewDevice] = useState<Partial<Device>>({
+    uid: 0,
+    vendor: "",
+    status: "online",
+  })
+
+  // Device creation state for View Details
+  const [newDeviceDetail, setNewDeviceDetail] = useState<Partial<Device>>({
+    uid: 0,
+    vendor: "",
+    status: "online",
+  })
+
+  const handleAddDevice = () => {
+    if (!newDevice.uid || !newDevice.vendor) {
+      toast.error("Please fill in all device fields")
+      return
+    }
+
+    const device: Device = {
+      uid: Number(newDevice.uid),
+      vendor: newDevice.vendor || "",
+      status: newDevice.status || "online",
+      dateCreated: new Date(),
+    }
+
+    setDevices([...devices, device])
+    setNewDevice({ uid: 0, vendor: "", status: "online" })
+  }
+
+  const handleRemoveDevice = (index: number) => {
+    const updatedDevices = [...devices]
+    updatedDevices.splice(index, 1)
+    setDevices(updatedDevices)
+  }
+
+  const fetchGateways = async () => {
+    try {
+      const response = await axios.get(`${process.env.API_URL}/gateways`)
+      setGateways(response.data)
+    } catch (error) {
+      console.error("Failed to fetch gateways:", error)
+      toast.error("Failed to fetch gateways")
+    }
+  }
+
+  useEffect(() => {
+    fetchGateways()
+  }, [])
 
   const filteredGateways = gateways.filter(
     (gateway) =>
@@ -73,8 +103,67 @@ export default function GatewayManagement() {
       gateway.ipAddress.includes(searchQuery),
   )
 
-  const handleDelete = (id: string) => {
-    setGateways(gateways.filter((g) => g.id !== id))
+  const handleDelete = async (id: string) => {
+    try {
+      await axios.delete(`${process.env.API_URL}/gateways/${id}`)
+      setGateways(gateways.filter((g) => g._id !== id))
+      toast.success("Gateway deleted successfully")
+    } catch (error) {
+      console.error("Error deleting gateway:", error)
+      toast.error("Failed to delete gateway")
+    }
+  }
+
+  const handleAddGateway = async () => {
+    if (!newGateway.serialNumber || !newGateway.name || !newGateway.ipAddress) {
+      return
+    }
+
+    try {
+      const payload = { ...newGateway, devices }
+      const response = await axios.post(`${process.env.API_URL}/gateways`, payload)
+      setGateways([...gateways, response.data])
+      setNewGateway({ serialNumber: "", name: "", ipAddress: "" })
+      setDevices([])
+      setIsDialogOpen(false)
+      toast.success("Gateway added successfully")
+    } catch (error) {
+      console.error("Error adding gateway:", error)
+      toast.error("Failed to add gateway")
+    }
+  }
+
+  const handleAddDeviceToGateway = async () => {
+    if (!selectedGateway || !selectedGateway._id) return
+    if (!newDeviceDetail.uid || !newDeviceDetail.vendor) {
+      toast.error("Please fill in all device fields")
+      return
+    }
+
+    const device: Device = {
+      uid: Number(newDeviceDetail.uid),
+      vendor: newDeviceDetail.vendor || "",
+      status: newDeviceDetail.status || "online",
+      dateCreated: new Date(),
+    }
+
+    const updatedDevices = [...selectedGateway.devices, device]
+
+    try {
+      const response = await axios.put(`${process.env.API_URL}/gateways/${selectedGateway._id}`, {
+        devices: updatedDevices
+      })
+
+      // Update local state
+      const updatedGateway = response.data
+      setGateways(gateways.map(g => g._id === updatedGateway._id ? updatedGateway : g))
+      setSelectedGateway(updatedGateway)
+      setNewDeviceDetail({ uid: 0, vendor: "", status: "online" })
+      toast.success("Device added successfully")
+    } catch (error) {
+      console.error("Error adding device:", error)
+      toast.error("Failed to add device")
+    }
   }
 
   return (
@@ -120,22 +209,103 @@ export default function GatewayManagement() {
                   <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
                       <Label htmlFor="serial">Serial Number</Label>
-                      <Input id="serial" placeholder="ABC12345" />
+                      <Input
+                        id="serial"
+                        placeholder="ABC12345"
+                        value={newGateway.serialNumber}
+                        onChange={(e) => setNewGateway({ ...newGateway, serialNumber: e.target.value })}
+                      />
                     </div>
                     <div className="grid gap-2">
                       <Label htmlFor="name">Name</Label>
-                      <Input id="name" placeholder="Gateway Name" />
+                      <Input
+                        id="name"
+                        placeholder="Gateway Name"
+                        value={newGateway.name}
+                        onChange={(e) => setNewGateway({ ...newGateway, name: e.target.value })}
+                      />
                     </div>
                     <div className="grid gap-2">
                       <Label htmlFor="ip">IP Address</Label>
-                      <Input id="ip" placeholder="192.168.1.1" />
+                      <Input
+                        id="ip"
+                        placeholder="192.168.1.1"
+                        value={newGateway.ipAddress}
+                        onChange={(e) => setNewGateway({ ...newGateway, ipAddress: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="border-t pt-4 mt-2">
+                      <h4 className="mb-2 font-semibold">Add Devices</h4>
+                      <div className="grid grid-cols-3 gap-2 mb-2">
+                        <Input
+                          type="number"
+                          placeholder="UID"
+                          value={newDevice.uid || ""}
+                          onChange={(e) => setNewDevice({ ...newDevice, uid: Number(e.target.value) })}
+                        />
+                        <Input
+                          placeholder="Vendor"
+                          value={newDevice.vendor}
+                          onChange={(e) => setNewDevice({ ...newDevice, vendor: e.target.value })}
+                        />
+                        <select
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          value={newDevice.status}
+                          onChange={(e) => setNewDevice({ ...newDevice, status: e.target.value })}
+                        >
+                          <option value="online">Online</option>
+                          <option value="offline">Offline</option>
+                        </select>
+                      </div>
+                      <Button type="button" variant="secondary" onClick={handleAddDevice} className="w-full mb-4">
+                        Add Device
+                      </Button>
+
+                      {devices.length > 0 && (
+                        <div className="border rounded-md">
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>UID</TableHead>
+                                <TableHead>Vendor</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead></TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {devices.map((device, index) => (
+                                <TableRow key={index}>
+                                  <TableCell>{device.uid}</TableCell>
+                                  <TableCell>{device.vendor}</TableCell>
+                                  <TableCell>{device.status}</TableCell>
+                                  <TableCell>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-destructive"
+                                      onClick={() => handleRemoveDevice(index)}
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                    <Button variant="outline" onClick={() => {
+                      setIsDialogOpen(false)
+                      setDevices([])
+                      setNewGateway({ serialNumber: "", name: "", ipAddress: "" })
+                    }}>
                       Cancel
                     </Button>
-                    <Button onClick={() => setIsDialogOpen(false)}>Add Gateway</Button>
+                    <Button onClick={handleAddGateway}>Add Gateway</Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
@@ -161,37 +331,26 @@ export default function GatewayManagement() {
                     <TableHead>Name</TableHead>
                     <TableHead>IP Address</TableHead>
                     <TableHead>Devices</TableHead>
-                    <TableHead>Status</TableHead>
                     <TableHead className="w-[80px]">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredGateways.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                      <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
                         No gateways found
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredGateways.map((gateway) => (
-                      <TableRow key={gateway.id}>
+                      <TableRow key={gateway._id}>
                         <TableCell className="font-mono text-sm">{gateway.serialNumber}</TableCell>
                         <TableCell className="font-medium">{gateway.name}</TableCell>
                         <TableCell className="font-mono text-sm text-muted-foreground">{gateway.ipAddress}</TableCell>
                         <TableCell>
-                          <Badge variant={gateway.devices > 0 ? "default" : "secondary"} className="font-mono">
-                            {gateway.devices}
+                          <Badge variant={gateway.devices.length > 0 ? "default" : "secondary"} className="font-mono">
+                            {gateway.devices.length}
                           </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <div
-                              className={`h-2 w-2 rounded-full ${
-                                gateway.status === "online" ? "bg-success" : "bg-destructive"
-                              }`}
-                            />
-                            <span className="text-sm capitalize">{gateway.status}</span>
-                          </div>
                         </TableCell>
                         <TableCell>
                           <DropdownMenu>
@@ -202,14 +361,17 @@ export default function GatewayManagement() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => {
+                                setSelectedGateway(gateway)
+                                setIsViewDialogOpen(true)
+                              }}>
                                 <Eye className="mr-2 h-4 w-4" />
                                 View Details
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
                                 className="text-destructive focus:text-destructive"
-                                onClick={() => handleDelete(gateway.id)}
+                                onClick={() => handleDelete(gateway._id)}
                               >
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 Delete
@@ -238,6 +400,100 @@ export default function GatewayManagement() {
           </CardContent>
         </Card>
       </main>
-    </div>
+      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Gateway Details</DialogTitle>
+            <DialogDescription>
+              Details for gateway {selectedGateway?.serialNumber}
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedGateway && (
+            <div className="py-4">
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div>
+                  <Label className="text-muted-foreground">Serial Number</Label>
+                  <p className="font-medium">{selectedGateway.serialNumber}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Name</Label>
+                  <p className="font-medium">{selectedGateway.name}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">IP Address</Label>
+                  <p className="font-medium">{selectedGateway.ipAddress}</p>
+                </div>
+              </div>
+
+              <h3 className="mb-2 text-lg font-semibold">Connected Devices ({selectedGateway.devices.length})</h3>
+              <div className="border rounded-md">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>UID</TableHead>
+                      <TableHead>Vendor</TableHead>
+                      <TableHead>Date Created</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {selectedGateway.devices && selectedGateway.devices.length > 0 ? (
+                      selectedGateway.devices.map((device, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{device.uid}</TableCell>
+                          <TableCell>{device.vendor}</TableCell>
+                          <TableCell>{new Date(device.dateCreated as any).toLocaleDateString()}</TableCell>
+                          <TableCell>
+                            <Badge variant={device.status === "online" ? "default" : "secondary"}>
+                              {device.status}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
+                          No devices connected
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+
+
+              <div className="border-t pt-4 mt-4">
+                <h4 className="mb-2 font-semibold">Add New Device</h4>
+                <div className="grid grid-cols-3 gap-2 mb-2">
+                  <Input
+                    type="number"
+                    placeholder="UID"
+                    value={newDeviceDetail.uid || ""}
+                    onChange={(e) => setNewDeviceDetail({ ...newDeviceDetail, uid: Number(e.target.value) })}
+                  />
+                  <Input
+                    placeholder="Vendor"
+                    value={newDeviceDetail.vendor}
+                    onChange={(e) => setNewDeviceDetail({ ...newDeviceDetail, vendor: e.target.value })}
+                  />
+                  <select
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    value={newDeviceDetail.status}
+                    onChange={(e) => setNewDeviceDetail({ ...newDeviceDetail, status: e.target.value })}
+                  >
+                    <option value="online">Online</option>
+                    <option value="offline">Offline</option>
+                  </select>
+                </div>
+                <Button type="button" variant="secondary" onClick={handleAddDeviceToGateway} className="w-full">
+                  Add Device to Gateway
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div >
   )
 }
