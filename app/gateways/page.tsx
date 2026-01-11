@@ -1,8 +1,8 @@
 "use client";
 
+import GatewayManagement from "@/src/presentation/features/gateways/components/gateway-manager";
 import React from "react";
 import { ToastContainer } from "react-toastify";
-import GatewayManagement from "./components/gateway-manager";
 
 const GatewaysPage = () => {
   return (
